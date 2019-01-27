@@ -9,68 +9,67 @@
 const jsvariable jsvariable::undefined;
 
 jsvariable::jsvariable() :
-        value{nullptr} {}
+        value{nullptr}, _type{constructor_t::Undefined}, constructor{_type} {}
+
+jsvariable::jsvariable(const jsvariable &other) :
+        value{other.value}, constructor{other.constructor} {}
 
 jsvariable::jsvariable(jsnumber _value) :
-        value{std::make_shared<jsnumber>(std::move(_value))} {}
+        value{std::make_shared<jsnumber>(std::move(_value))}, _type{constructor_t::Number}, constructor{_type} {}
 
 jsvariable::jsvariable(long double _value) :
-        value{std::make_shared<jsnumber>(_value)} {}
+        value{std::make_shared<jsnumber>(_value)}, _type{constructor_t::Number}, constructor{_type} {}
 
 jsvariable::jsvariable(short _value) :
-        value{std::make_shared<jsnumber>(_value)} {}
+        value{std::make_shared<jsnumber>(_value)}, _type{constructor_t::Number}, constructor{_type} {}
 
 jsvariable::jsvariable(int _value) :
-        value{std::make_shared<jsnumber>(_value)} {}
+        value{std::make_shared<jsnumber>(_value)}, _type{constructor_t::Number}, constructor{_type} {}
 
 jsvariable::jsvariable(float _value) :
-        value{std::make_shared<jsnumber>(_value)} {}
+        value{std::make_shared<jsnumber>(_value)}, _type{constructor_t::Number}, constructor{_type} {}
 
 jsvariable::jsvariable(double _value) :
-        value{std::make_shared<jsnumber>(_value)} {}
+        value{std::make_shared<jsnumber>(_value)}, _type{constructor_t::Number}, constructor{_type} {}
 
 jsvariable::jsvariable(long _value) :
-        value{std::make_shared<jsnumber>(_value)} {}
+        value{std::make_shared<jsnumber>(_value)}, _type{constructor_t::Number}, constructor{_type} {}
 
 jsvariable::jsvariable(long long _value) :
-        value{std::make_shared<jsnumber>(_value)} {}
+        value{std::make_shared<jsnumber>(_value)}, _type{constructor_t::Number}, constructor{_type} {}
 
 jsvariable::jsvariable(jsstring _value) :
-        value{std::make_shared<jsstring>(std::move(_value))} {}
+        value{std::make_shared<jsstring>(std::move(_value))}, _type{constructor_t::String}, constructor{_type} {}
 
 jsvariable::jsvariable(std::string _value) :
-        value{std::make_shared<jsstring>(_value)} {}
+        value{std::make_shared<jsstring>(_value)}, _type{constructor_t::String}, constructor{_type} {}
 
 jsvariable::jsvariable(const char *_value) :
-        value{std::make_shared<jsstring>(_value)} {}
+        value{std::make_shared<jsstring>(_value)}, _type{constructor_t::String}, constructor{_type} {}
 
 jsvariable::jsvariable(char _value) :
-        value{std::make_shared<jsstring>(_value)} {}
+        value{std::make_shared<jsstring>(_value)}, _type{constructor_t::String}, constructor{_type} {}
 
 jsvariable::jsvariable(jsboolean _value) :
-        value{std::make_shared<jsboolean>(std::move(_value))} {}
+        value{std::make_shared<jsboolean>(std::move(_value))}, _type{constructor_t::Boolean}, constructor{_type} {}
 
 jsvariable::jsvariable(bool _value) :
-        value{std::make_shared<jsboolean>(_value)} {}
+        value{std::make_shared<jsboolean>(_value)}, _type{constructor_t::Boolean}, constructor{_type} {}
 
 jsvariable::jsvariable(jsarray _values) :
-        value{std::make_shared<jsarray>(std::move(_values))} {}
+        value{std::make_shared<jsarray>(std::move(_values))}, _type{constructor_t::Array}, constructor{_type} {}
 
 jsvariable::jsvariable(std::initializer_list<jsvariable> _values) :
-        value{std::make_shared<jsarray>(_values)} {}
+        value{std::make_shared<jsarray>(_values)}, _type{constructor_t::Array}, constructor{_type} {}
 
 jsvariable::jsvariable(jsobject _value) :
-        value{std::make_shared<jsobject>(std::move(_value))} {}
+        value{std::make_shared<jsobject>(std::move(_value))}, _type{constructor_t::Object}, constructor{_type} {}
 
 jsvariable::jsvariable(std::initializer_list<std::pair<const std::string, jsvariable>> _values) :
-        value{std::make_shared<jsobject>(_values)} {}
+        value{std::make_shared<jsobject>(_values)}, _type{constructor_t::Object}, constructor{_type} {}
 
 std::string jsvariable::toString() const {
     return *this ? value->toString() : "undefined";
-}
-
-std::string jsvariable::pretty_printed(unsigned short tabs) const {
-    return *this ? value->pretty_printed(tabs) : "undefined";
 }
 
 jsvariable &jsvariable::operator[](const std::string &property_name) noexcept(false) {
@@ -105,6 +104,16 @@ jsvariable::operator bool() const {
     return this != &undefined and value != nullptr;
 }
 
+jsvariable::operator jsarray() const {
+    return *dynamic_cast<jsarray *>(&*value);
+}
+
+jsvariable &jsvariable::operator=(const jsvariable &other) {
+    value = other.value;
+    _type = other._type;
+    return *this;
+}
+
 std::ostream &operator<<(std::ostream &out, const jsvariable &v) {
     return out << v.toString();
 }
@@ -135,10 +144,6 @@ char &jsuvariable::operator=(char &&_c) {
 char &jsuvariable::operator=(const char &_c) {
     v = nullptr;
     return *c = _c;
-}
-
-std::string jsuvariable::pretty_printed(unsigned short tabs) const {
-    return v ? v->pretty_printed(tabs) : c;
 }
 
 const jsvariable &jsuvariable::operator[](const std::string &property_name) const noexcept(false) {

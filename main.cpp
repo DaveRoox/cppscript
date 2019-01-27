@@ -55,5 +55,11 @@ int main() {
     cout << s << endl;
 
     cout << ao << endl;
+
+    cout << ((jsarray) ao).concat(false, 1, 2.88, "ciao", 'c', jsarray{{"key", "value"}}) << endl;
+
+    jsarray lol = {"Banana", "Orange", "Apple", "Mango", "Cino"};
+    cout << lol.copyWithin(2, 0, 4) << endl;
+    cout << lol.entries() << endl;
     return 0;
 }

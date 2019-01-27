@@ -24,13 +24,26 @@ class jsuvariable;
 template<typename Func>
 class jsfunction;
 
+enum class constructor_t {
+    Object,
+    Array,
+    Number,
+    String,
+    Boolean,
+    Function,
+    Undefined
+};
+
 class jsvariable {
 
 private:
     std::shared_ptr<jsvalue> value;
+    constructor_t _type;
 
 public:
     explicit jsvariable();
+
+    jsvariable(const jsvariable &);
 
     jsvariable(jsnumber);
 
@@ -68,6 +81,8 @@ public:
 
     jsvariable(std::initializer_list<std::pair<const std::string, jsvariable>> _values);
 
+    jsvariable &operator=(const jsvariable &);
+
     jsuvariable operator[](unsigned long) noexcept(false);
 
     const jsuvariable operator[](unsigned long) const noexcept(false);
@@ -78,9 +93,11 @@ public:
 
     std::string toString() const;
 
-    std::string pretty_printed(unsigned short = 0) const;
-
     explicit operator bool() const;
+
+    explicit operator jsarray() const;
+
+    const constructor_t &constructor;
 
     const static jsvariable undefined;
 
@@ -112,8 +129,6 @@ public:
     jsvariable &operator[](const std::string &) noexcept(false);
 
     const jsvariable &operator[](const std::string &) const noexcept(false);
-
-    std::string pretty_printed(unsigned short = 0) const;
 
     explicit operator bool() const;
 

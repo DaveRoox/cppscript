@@ -17,8 +17,6 @@ class jsvalue {
 public:
     virtual std::string toString() const = 0;
 
-    virtual std::string pretty_printed(unsigned short) const = 0;
-
     virtual ~jsvalue() = default;
 
 };
@@ -31,21 +29,27 @@ private:
 public:
     jsnumber(long double _value) : value{_value} {}
 
-    jsnumber(short _value) : value(_value) {}
-
-    jsnumber(int _value) : value(_value) {}
-
     jsnumber(float _value) : value(_value) {}
 
     jsnumber(double _value) : value(_value) {}
 
-    jsnumber(long _value) : value(_value) {}
+    jsnumber(unsigned short _value) : value(_value) {}
 
-    jsnumber(long long _value) : value(_value) {}
+    jsnumber(unsigned int _value) : value(_value) {}
+
+    jsnumber(unsigned long _value) : value(_value) {}
+
+    jsnumber(unsigned long long _value) : value(_value) {}
+
+    jsnumber(signed short _value) : value(_value) {}
+
+    jsnumber(signed int _value) : value(_value) {}
+
+    jsnumber(signed long _value) : value(_value) {}
+
+    jsnumber(signed long long _value) : value(_value) {}
 
     std::string toString() const override;
-
-    std::string pretty_printed(unsigned short) const override;
 
 };
 
@@ -73,22 +77,18 @@ public:
 
     std::string toString() const override;
 
-    std::string pretty_printed(unsigned short) const override;
-
 };
 
 class jsboolean : public jsvalue {
 
 private:
-    static std::string values[2];
+    static const std::string values[2];
     bool value;
 
 public:
     jsboolean(bool _value) : value{_value} {}
 
     std::string toString() const override;
-
-    std::string pretty_printed(unsigned short) const override;
 
 };
 
@@ -117,8 +117,6 @@ public:
 
     std::string toString() const override;
 
-    std::string pretty_printed(unsigned short) const override;
-
 };
 
 template<typename Func>
@@ -133,16 +131,57 @@ public:
 
     std::string toString() const override;
 
-    std::string pretty_printed(unsigned short) const override;
 };
 
 class jsarray : public jsvalue {
+
+    friend struct jsarray_iterator;
 
 private:
     std::vector<jsvariable> values;
     unsigned long _size;
 
 public:
+
+    struct jsarray_iterator {
+
+    private:
+        jsarray &_array;
+
+        std::string toString() const;
+
+        friend class jsarray;
+
+    public:
+        const unsigned long key;
+        jsvariable &value;
+
+        jsarray_iterator(unsigned long _key, jsvariable &_value, jsarray &__array) :
+                value{_value}, _array{__array}, key{_key} {}
+
+        jsarray_iterator &operator=(const jsarray_iterator &) = delete;
+
+        jsarray_iterator next() const;
+
+    };
+
+    struct jsarray_iterators {
+    private:
+        std::vector<jsarray_iterator> iterators;
+        mutable unsigned long index;
+    public:
+        jsarray_iterators(std::vector<jsarray_iterator> &&_iterators) :
+                iterators{std::move(_iterators)}, index{0ul} {}
+
+        jsarray_iterator &next();
+
+        const jsarray_iterator &next() const;
+
+        bool has_next() const;
+
+        std::string toString() const;
+
+    };
 
     jsarray();
 
@@ -151,6 +190,21 @@ public:
     jsarray(const jsarray &);
 
     jsarray(jsarray &&) noexcept;
+
+    jsarray concat(const jsvariable &args) const;
+
+    template<typename ... Args>
+    inline jsarray concat(const jsvariable &value, Args ... args) const { return concat(value).concat(args...); }
+
+    jsarray copyWithin(unsigned long, unsigned long, unsigned long) const;
+
+    jsarray copyWithin(unsigned long, unsigned long) const;
+
+    jsarray copyWithin(unsigned long) const;
+
+    jsarray_iterators entries();
+
+    unsigned long push(const jsvariable &);
 
     jsarray &operator=(const jsarray &);
 
@@ -162,8 +216,6 @@ public:
 
     std::string toString() const override;
 
-    std::string pretty_printed(unsigned short) const override;
-
     const unsigned long &length;
 
 };
@@ -173,9 +225,6 @@ std::string jsfunction<Func>::toString() const {
     return std::string{"[Function "} + typeid(Func).name() + "]";
 }
 
-template<typename Func>
-std::string jsfunction<Func>::pretty_printed(unsigned short tabs) const {
-    return std::string();
-}
+std::ostream &operator<<(std::ostream &, const jsarray::jsarray_iterators &);
 
 #endif //C_SCRIPT_JSVALUE_H
