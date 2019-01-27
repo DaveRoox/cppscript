@@ -49,17 +49,25 @@ public:
 
     jsvariable(long double);
 
-    jsvariable(short);
+    jsvariable(unsigned short);
 
-    jsvariable(int);
+    jsvariable(signed short);
+
+    jsvariable(unsigned int);
+
+    jsvariable(signed int);
 
     jsvariable(float);
 
     jsvariable(double);
 
-    jsvariable(long);
+    jsvariable(unsigned long);
 
-    jsvariable(long long);
+    jsvariable(signed long);
+
+    jsvariable(unsigned long long);
+
+    jsvariable(signed long long);
 
     jsvariable(jsstring);
 
@@ -67,7 +75,7 @@ public:
 
     jsvariable(const char *);
 
-    jsvariable(char);
+    jsvariable(signed char);
 
     jsvariable(jsboolean);
 
@@ -75,11 +83,11 @@ public:
 
     jsvariable(jsarray);
 
-    jsvariable(std::initializer_list<jsvariable> _values);
+    jsvariable(std::initializer_list<jsvariable>);
 
     jsvariable(jsobject);
 
-    jsvariable(std::initializer_list<std::pair<const std::string, jsvariable>> _values);
+    jsvariable(std::initializer_list<std::pair<const std::string, jsvariable>>);
 
     jsvariable &operator=(const jsvariable &);
 
@@ -143,6 +151,5 @@ std::ostream &operator<<(std::ostream &, const jsvariable &);
 std::ostream &operator<<(std::ostream &, const jsuvariable &);
 
 using let = jsvariable;
-using constlet = jsvariable;
 
 #endif //C_SCRIPT_JSVARIABLE_H

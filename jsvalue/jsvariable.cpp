@@ -20,10 +20,16 @@ jsvariable::jsvariable(jsnumber _value) :
 jsvariable::jsvariable(long double _value) :
         value{std::make_shared<jsnumber>(_value)}, _type{constructor_t::Number}, constructor{_type} {}
 
-jsvariable::jsvariable(short _value) :
+jsvariable::jsvariable(signed short _value) :
         value{std::make_shared<jsnumber>(_value)}, _type{constructor_t::Number}, constructor{_type} {}
 
-jsvariable::jsvariable(int _value) :
+jsvariable::jsvariable(unsigned short _value) :
+        value{std::make_shared<jsnumber>(_value)}, _type{constructor_t::Number}, constructor{_type} {}
+
+jsvariable::jsvariable(signed int _value) :
+        value{std::make_shared<jsnumber>(_value)}, _type{constructor_t::Number}, constructor{_type} {}
+
+jsvariable::jsvariable(unsigned int _value) :
         value{std::make_shared<jsnumber>(_value)}, _type{constructor_t::Number}, constructor{_type} {}
 
 jsvariable::jsvariable(float _value) :
@@ -32,10 +38,16 @@ jsvariable::jsvariable(float _value) :
 jsvariable::jsvariable(double _value) :
         value{std::make_shared<jsnumber>(_value)}, _type{constructor_t::Number}, constructor{_type} {}
 
-jsvariable::jsvariable(long _value) :
+jsvariable::jsvariable(signed long _value) :
         value{std::make_shared<jsnumber>(_value)}, _type{constructor_t::Number}, constructor{_type} {}
 
-jsvariable::jsvariable(long long _value) :
+jsvariable::jsvariable(unsigned long _value) :
+        value{std::make_shared<jsnumber>(_value)}, _type{constructor_t::Number}, constructor{_type} {}
+
+jsvariable::jsvariable(signed long long _value) :
+        value{std::make_shared<jsnumber>(_value)}, _type{constructor_t::Number}, constructor{_type} {}
+
+jsvariable::jsvariable(unsigned long long _value) :
         value{std::make_shared<jsnumber>(_value)}, _type{constructor_t::Number}, constructor{_type} {}
 
 jsvariable::jsvariable(jsstring _value) :
@@ -47,7 +59,7 @@ jsvariable::jsvariable(std::string _value) :
 jsvariable::jsvariable(const char *_value) :
         value{std::make_shared<jsstring>(_value)}, _type{constructor_t::String}, constructor{_type} {}
 
-jsvariable::jsvariable(char _value) :
+jsvariable::jsvariable(signed char _value) :
         value{std::make_shared<jsstring>(_value)}, _type{constructor_t::String}, constructor{_type} {}
 
 jsvariable::jsvariable(jsboolean _value) :

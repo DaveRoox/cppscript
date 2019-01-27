@@ -63,13 +63,13 @@ public:
 
     jsstring(const char *_value) : value{_value} {}
 
-    jsstring(char _value) : value{_value} {}
+    jsstring(signed char _value) : value{_value} {}
 
     jsstring(const std::unique_ptr<char *> &_value) : value{} { value.push_back(**_value); };
 
     jsstring(jsstring &&other) noexcept : value{std::move(other.value)} {}
 
-    jsstring &operator=(jsstring &&other) noexcept;
+    jsstring &operator=(jsstring &&) noexcept;
 
     const char &operator[](unsigned long) const noexcept(false);
 

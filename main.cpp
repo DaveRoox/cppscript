@@ -7,12 +7,8 @@ int main() {
 
     let u; // Creating an undefined variable
 
-    constlet uu;
-
     jsarray aaa = {"1", 1, true};
     cout << aaa.length << endl;
-
-    cout << uu.toString() << endl;
 
     cout << u.toString() << endl;
 

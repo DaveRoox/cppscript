@@ -148,7 +148,7 @@ std::string jsobject::toString() const {
     ss << "{";
     if (!values.empty()) {
         for (const auto &[key, value] : values)
-            if (value)
+            if (value) // TODO: fare ss.seekp solo se c'è stato almeno un inserimento!
                 ss << "\"" << key << "\"" << ":" << value.toString() << ",";
         ss.seekp(-1, std::ios_base::end);
     }
