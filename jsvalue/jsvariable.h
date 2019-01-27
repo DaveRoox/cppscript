@@ -19,6 +19,11 @@ class jsarray;
 
 class jsobject;
 
+class jsuvariable;
+
+template<typename Func>
+class jsfunction;
+
 class jsvariable {
 
 private:
@@ -63,15 +68,15 @@ public:
 
     jsvariable(std::initializer_list<std::pair<const std::string, jsvariable>> _values);
 
-    jsvariable &operator[](unsigned long) noexcept(false);
+    jsuvariable operator[](unsigned long) noexcept(false);
 
-    const jsvariable &operator[](unsigned long) const noexcept(false);
+    const jsuvariable operator[](unsigned long) const noexcept(false);
 
     jsvariable &operator[](const std::string &) noexcept(false);
 
     const jsvariable &operator[](const std::string &) const noexcept(false);
 
-    std::string str() const;
+    std::string toString() const;
 
     std::string pretty_printed(unsigned short = 0) const;
 
@@ -81,8 +86,48 @@ public:
 
 };
 
+class jsuvariable {
+private:
+    jsvariable *v;
+    char *c;
+public:
+    jsuvariable(jsvariable &_v) : v{&_v}, c{nullptr} {}
+
+    jsuvariable(char &_c) : v{nullptr}, c{&_c} {}
+
+    char &operator=(const char &_c);
+
+    char &operator=(char &&_c);
+
+    jsvariable &operator=(const jsvariable &_v);
+
+    jsvariable &operator=(jsvariable &&_v);
+
+    /**/
+
+    jsuvariable operator[](unsigned long) noexcept(false);
+
+    const jsuvariable operator[](unsigned long) const noexcept(false);
+
+    jsvariable &operator[](const std::string &) noexcept(false);
+
+    const jsvariable &operator[](const std::string &) const noexcept(false);
+
+    std::string pretty_printed(unsigned short = 0) const;
+
+    explicit operator bool() const;
+
+    /**/
+
+    std::string str() const;
+
+};
+
 std::ostream &operator<<(std::ostream &, const jsvariable &);
 
+std::ostream &operator<<(std::ostream &, const jsuvariable &);
+
 using let = jsvariable;
+using constlet = jsvariable;
 
 #endif //C_SCRIPT_JSVARIABLE_H

@@ -15,7 +15,7 @@
 class jsvalue {
 
 public:
-    virtual std::string str() const = 0;
+    virtual std::string toString() const = 0;
 
     virtual std::string pretty_printed(unsigned short) const = 0;
 
@@ -43,7 +43,7 @@ public:
 
     jsnumber(long long _value) : value(_value) {}
 
-    std::string str() const override;
+    std::string toString() const override;
 
     std::string pretty_printed(unsigned short) const override;
 
@@ -59,13 +59,19 @@ public:
 
     jsstring(const char *_value) : value{_value} {}
 
-    jsstring(char c) : value{c} {}
+    jsstring(char _value) : value{_value} {}
+
+    jsstring(const std::unique_ptr<char *> &_value) : value{} { value.push_back(**_value); };
 
     jsstring(jsstring &&other) noexcept : value{std::move(other.value)} {}
 
     jsstring &operator=(jsstring &&other) noexcept;
 
-    std::string str() const override;
+    const char &operator[](unsigned long) const noexcept(false);
+
+    char &operator[](unsigned long) noexcept(false);
+
+    std::string toString() const override;
 
     std::string pretty_printed(unsigned short) const override;
 
@@ -80,7 +86,7 @@ private:
 public:
     jsboolean(bool _value) : value{_value} {}
 
-    std::string str() const override;
+    std::string toString() const override;
 
     std::string pretty_printed(unsigned short) const override;
 
@@ -109,20 +115,36 @@ public:
 
     const jsvariable &operator[](const std::string &) const noexcept(false);
 
-    std::string str() const override;
+    std::string toString() const override;
 
     std::string pretty_printed(unsigned short) const override;
 
+};
+
+template<typename Func>
+class jsfunction : public jsvalue {
+private:
+    std::function<Func> value;
+public:
+
+    jsfunction() = default;
+
+    jsfunction(std::function<Func> f) : value{std::move(f)} {}
+
+    std::string toString() const override;
+
+    std::string pretty_printed(unsigned short) const override;
 };
 
 class jsarray : public jsvalue {
 
 private:
     std::vector<jsvariable> values;
+    unsigned long _size;
 
 public:
 
-    jsarray() = default;
+    jsarray();
 
     jsarray(std::initializer_list<jsvariable>);
 
@@ -138,27 +160,22 @@ public:
 
     jsvariable &operator[](unsigned long) noexcept(false);
 
-    std::string str() const override;
+    std::string toString() const override;
 
     std::string pretty_printed(unsigned short) const override;
+
+    const unsigned long &length;
 
 };
 
 template<typename Func>
-class jsfunction : public jsvalue {
-private:
-    std::function<Func> value;
-public:
-    jsfunction() = default;
-
-    std::string str() const override;
-
-    std::string pretty_printed(unsigned short) const override;
-};
-
-template<typename Func>
-std::string jsfunction<Func>::str() const {
+std::string jsfunction<Func>::toString() const {
     return std::string{"[Function "} + typeid(Func).name() + "]";
+}
+
+template<typename Func>
+std::string jsfunction<Func>::pretty_printed(unsigned short tabs) const {
+    return std::string();
 }
 
 #endif //C_SCRIPT_JSVALUE_H
