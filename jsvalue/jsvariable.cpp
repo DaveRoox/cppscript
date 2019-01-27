@@ -120,10 +120,22 @@ jsvariable::operator jsarray() const {
     return *dynamic_cast<jsarray *>(&*value);
 }
 
+jsvariable::operator jsnumber() const {
+    return *dynamic_cast<jsnumber *>(&*value);
+}
+
 jsvariable &jsvariable::operator=(const jsvariable &other) {
     value = other.value;
     _type = other._type;
     return *this;
+}
+
+bool jsvariable::operator==(const jsvariable &other) const {
+    if (this == &other)
+        return true;
+    if (constructor != other.constructor)
+        return false;
+    return *value == *other.value;
 }
 
 std::ostream &operator<<(std::ostream &out, const jsvariable &v) {

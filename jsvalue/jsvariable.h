@@ -91,6 +91,8 @@ public:
 
     jsvariable &operator=(const jsvariable &);
 
+    bool operator==(const jsvariable &) const;
+
     jsuvariable operator[](unsigned long) noexcept(false);
 
     const jsuvariable operator[](unsigned long) const noexcept(false);
@@ -104,6 +106,8 @@ public:
     explicit operator bool() const;
 
     explicit operator jsarray() const;
+
+    explicit operator jsnumber() const;
 
     const constructor_t &constructor;
 

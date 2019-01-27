@@ -17,37 +17,180 @@ class jsvalue {
 public:
     virtual std::string toString() const = 0;
 
+    virtual bool operator==(const jsvalue &) const = 0;
+
+    inline virtual bool operator!=(const jsvalue &other) const { return !(*this == other); }
+
     virtual ~jsvalue() = default;
 
 };
 
-class jsnumber : public jsvalue {
+class jsnumber : public jsvalue { // <, <=, ==, !=, >=, >
+    // <, == allora:
+    //      <= è dato da < OR ==
+    //      > è dato dal not(<=)
+    //      != è dato dal not(==)
+    //      >= è dato dal > OR ==
 
 private:
     long double value;
 
 public:
-    jsnumber(long double _value) : value{_value} {}
+    jsnumber(long double);
 
-    jsnumber(float _value) : value(_value) {}
+    jsnumber(float);
 
-    jsnumber(double _value) : value(_value) {}
+    jsnumber(double);
 
-    jsnumber(unsigned short _value) : value(_value) {}
+    jsnumber(unsigned short);
 
-    jsnumber(unsigned int _value) : value(_value) {}
+    jsnumber(unsigned int);
 
-    jsnumber(unsigned long _value) : value(_value) {}
+    jsnumber(unsigned long int);
 
-    jsnumber(unsigned long long _value) : value(_value) {}
+    jsnumber(unsigned long long int);
 
-    jsnumber(signed short _value) : value(_value) {}
+    jsnumber(signed short);
 
-    jsnumber(signed int _value) : value(_value) {}
+    jsnumber(signed int);
 
-    jsnumber(signed long _value) : value(_value) {}
+    jsnumber(signed long int);
 
-    jsnumber(signed long long _value) : value(_value) {}
+    jsnumber(signed long long int);
+
+    bool operator==(const jsvalue &) const override;
+
+    bool operator<(long double) const;
+
+    bool operator==(long double) const;
+
+    bool operator<=(long double) const;
+
+    bool operator>(long double) const;
+
+    bool operator!=(long double) const;
+
+    bool operator>=(long double) const;
+
+    bool operator<(float) const;
+
+    bool operator==(float) const;
+
+    bool operator<=(float) const;
+
+    bool operator>(float) const;
+
+    bool operator!=(float) const;
+
+    bool operator>=(float) const;
+
+    bool operator<(double) const;
+
+    bool operator==(double) const;
+
+    bool operator<=(double) const;
+
+    bool operator>(double) const;
+
+    bool operator!=(double) const;
+
+    bool operator>=(double) const;
+
+    bool operator<(unsigned short) const;
+
+    bool operator==(unsigned short) const;
+
+    bool operator<=(unsigned short) const;
+
+    bool operator>(unsigned short) const;
+
+    bool operator!=(unsigned short) const;
+
+    bool operator>=(unsigned short) const;
+
+    bool operator<(unsigned int) const;
+
+    bool operator==(unsigned int) const;
+
+    bool operator<=(unsigned int) const;
+
+    bool operator>(unsigned int) const;
+
+    bool operator!=(unsigned int) const;
+
+    bool operator>=(unsigned int) const;
+
+    bool operator<(unsigned long int) const;
+
+    bool operator==(unsigned long int) const;
+
+    bool operator<=(unsigned long int) const;
+
+    bool operator>(unsigned long int) const;
+
+    bool operator!=(unsigned long int) const;
+
+    bool operator>=(unsigned long int) const;
+
+    bool operator<(unsigned long long int) const;
+
+    bool operator==(unsigned long long int) const;
+
+    bool operator<=(unsigned long long int) const;
+
+    bool operator>(unsigned long long int) const;
+
+    bool operator!=(unsigned long long int) const;
+
+    bool operator>=(unsigned long long int) const;
+
+    bool operator<(signed short) const;
+
+    bool operator==(signed short) const;
+
+    bool operator<=(signed short) const;
+
+    bool operator>(signed short) const;
+
+    bool operator!=(signed short) const;
+
+    bool operator>=(signed short) const;
+
+    bool operator<(signed int) const;
+
+    bool operator==(signed int) const;
+
+    bool operator<=(signed int) const;
+
+    bool operator>(signed int) const;
+
+    bool operator!=(signed int) const;
+
+    bool operator>=(signed int) const;
+
+    bool operator<(signed long int) const;
+
+    bool operator==(signed long int) const;
+
+    bool operator<=(signed long int) const;
+
+    bool operator>(signed long int) const;
+
+    bool operator!=(signed long int) const;
+
+    bool operator>=(signed long int) const;
+
+    bool operator<(signed long long int) const;
+
+    bool operator==(signed long long int) const;
+
+    bool operator<=(signed long long int) const;
+
+    bool operator>(signed long long int) const;
+
+    bool operator!=(signed long long int) const;
+
+    bool operator>=(signed long long int) const;
 
     std::string toString() const override;
 
@@ -59,21 +202,23 @@ private:
     std::string value;
 
 public:
-    jsstring(std::string _value) : value{std::move(_value)} {}
+    jsstring(std::string);
 
-    jsstring(const char *_value) : value{_value} {}
+    jsstring(const char *);
 
-    jsstring(signed char _value) : value{_value} {}
+    jsstring(signed char);
 
-    jsstring(const std::unique_ptr<char *> &_value) : value{} { value.push_back(**_value); };
+    jsstring(const std::unique_ptr<char *> &);
 
-    jsstring(jsstring &&other) noexcept : value{std::move(other.value)} {}
+    jsstring(jsstring &&) noexcept;
 
     jsstring &operator=(jsstring &&) noexcept;
 
-    const char &operator[](unsigned long) const noexcept(false);
+    const char &operator[](unsigned long int) const noexcept(false);
 
-    char &operator[](unsigned long) noexcept(false);
+    char &operator[](unsigned long int) noexcept(false);
+
+    bool operator==(const jsvalue &) const override;
 
     std::string toString() const override;
 
@@ -86,7 +231,11 @@ private:
     bool value;
 
 public:
-    jsboolean(bool _value) : value{_value} {}
+    jsboolean(bool);
+
+    bool operator==(const jsvalue &) const override;
+
+    explicit operator bool() const;
 
     std::string toString() const override;
 
@@ -115,6 +264,8 @@ public:
 
     const jsvariable &operator[](const std::string &) const noexcept(false);
 
+    bool operator==(const jsvalue &) const override;
+
     std::string toString() const override;
 
 };
@@ -128,6 +279,11 @@ public:
     jsfunction() = default;
 
     jsfunction(std::function<Func> f) : value{std::move(f)} {}
+
+    template<typename ... Args>
+    inline auto operator()(Args ... args) { return value(args...); }
+
+    bool operator==(const jsvalue &) const override;
 
     std::string toString() const override;
 
@@ -156,8 +312,7 @@ public:
         const unsigned long key;
         jsvariable &value;
 
-        jsarray_iterator(unsigned long _key, jsvariable &_value, jsarray &__array) :
-                value{_value}, _array{__array}, key{_key} {}
+        jsarray_iterator(unsigned long _key, jsvariable &, jsarray &);
 
         jsarray_iterator &operator=(const jsarray_iterator &) = delete;
 
@@ -170,8 +325,7 @@ public:
         std::vector<jsarray_iterator> iterators;
         mutable unsigned long index;
     public:
-        jsarray_iterators(std::vector<jsarray_iterator> &&_iterators) :
-                iterators{std::move(_iterators)}, index{0ul} {}
+        jsarray_iterators(std::vector<jsarray_iterator> &&);
 
         jsarray_iterator &next();
 
@@ -196,13 +350,26 @@ public:
     template<typename ... Args>
     inline jsarray concat(const jsvariable &value, Args ... args) const { return concat(value).concat(args...); }
 
-    jsarray copyWithin(unsigned long, unsigned long, unsigned long) const;
+    jsarray copyWithin(unsigned long, unsigned long, unsigned long int) const;
 
-    jsarray copyWithin(unsigned long, unsigned long) const;
+    jsarray copyWithin(unsigned long, unsigned long int) const;
 
-    jsarray copyWithin(unsigned long) const;
+    jsarray copyWithin(unsigned long int) const;
 
     jsarray_iterators entries();
+
+    bool every(jsfunction<bool(const jsvariable &, unsigned long, const jsarray &)>,
+               const jsvariable & = jsvariable::undefined) const;
+
+    bool every(jsfunction<bool(const jsvariable &, unsigned long int)>) const;
+
+    bool every(jsfunction<bool(const jsvariable &)>) const;
+
+    jsarray fill(const jsvariable &, unsigned long int, unsigned long int) const;
+
+    jsarray fill(const jsvariable &, unsigned long int) const;
+
+    jsarray fill(const jsvariable &) const;
 
     unsigned long push(const jsvariable &);
 
@@ -210,19 +377,28 @@ public:
 
     jsarray &operator=(jsarray &&) noexcept;
 
-    const jsvariable &operator[](unsigned long) const noexcept(false);
+    const jsvariable &operator[](unsigned long int) const noexcept(false);
 
-    jsvariable &operator[](unsigned long) noexcept(false);
+    jsvariable &operator[](unsigned long int) noexcept(false);
+
+    bool operator==(const jsvalue &) const override;
 
     std::string toString() const override;
 
-    const unsigned long &length;
+    const unsigned long int &length;
 
 };
 
 template<typename Func>
 std::string jsfunction<Func>::toString() const {
     return std::string{"[Function "} + typeid(Func).name() + "]";
+}
+
+template<typename Func>
+bool jsfunction<Func>::operator==(const jsvalue &other) const {
+    if (auto d = dynamic_cast<const jsfunction *>(&other))
+        return value.target_type() == d->value.target_type(); // TODO: Verificarne la correttezza
+    return false;
 }
 
 std::ostream &operator<<(std::ostream &, const jsarray::jsarray_iterators &);
