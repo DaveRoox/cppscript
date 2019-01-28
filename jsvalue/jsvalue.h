@@ -371,6 +371,52 @@ public:
 
     jsarray fill(const jsvariable &) const;
 
+    jsarray filter(jsfunction<bool(const jsvariable &, unsigned long, const jsarray &)>,
+                   const jsvariable & = jsvariable::undefined) const;
+
+    jsarray filter(jsfunction<bool(const jsvariable &, unsigned long int)>) const;
+
+    jsarray filter(jsfunction<bool(const jsvariable &)>) const;
+
+    const jsvariable &find(jsfunction<bool(const jsvariable &, unsigned long, const jsarray &)>,
+                           const jsvariable & = jsvariable::undefined) const;
+
+    const jsvariable &find(jsfunction<bool(const jsvariable &, unsigned long int)>) const;
+
+    const jsvariable &find(jsfunction<bool(const jsvariable &)>) const;
+
+    signed long int findIndex(jsfunction<bool(const jsvariable &, unsigned long, const jsarray &)>,
+                              const jsvariable & = jsvariable::undefined) const;
+
+    signed long int findIndex(jsfunction<bool(const jsvariable &, unsigned long int)>) const;
+
+    signed long int findIndex(jsfunction<bool(const jsvariable &)>) const;
+
+    template<typename T>
+    const jsvariable &forEach(jsfunction<T(const jsvariable &, unsigned long, const jsarray &)> f,
+                              const jsvariable &_this) const {
+        for (unsigned long int i = 0; i < values.size(); ++i)
+            if (const auto &value = values.at(i); value)
+                f(value, i, _this ? (jsarray) _this : *this);
+        return jsvariable::undefined;
+    }
+
+    template<typename T = void>
+    const jsvariable &forEach(jsfunction<T(const jsvariable &, unsigned long int)> f) const {
+        for (unsigned long int i = 0; i < values.size(); ++i)
+            if (const auto &value = values.at(i); value)
+                f(value, i);
+        return jsvariable::undefined;
+    }
+
+    template<typename T = void>
+    const jsvariable &forEach(jsfunction<T(const jsvariable &)> f) const {
+        for (const auto &value : values)
+            if (value)
+                f(value);
+        return jsvariable::undefined;
+    }
+
     unsigned long push(const jsvariable &);
 
     jsarray &operator=(const jsarray &);

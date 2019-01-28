@@ -465,14 +465,14 @@ jsarray::jsarray_iterators jsarray::entries() {
 
 bool jsarray::every(jsfunction<bool(const jsvariable &)> f) const {
     for (const auto &value : values)
-        if (!f(value))
+        if (value and !f(value))
             return false;
     return true;
 }
 
 bool jsarray::every(jsfunction<bool(const jsvariable &, unsigned long int)> f) const {
     for (unsigned long i = 0; i < values.size(); ++i)
-        if (!f(values.at(i), i))
+        if (const auto &value = values.at(i); value and !f(value, i))
             return false;
     return true;
 }
@@ -480,7 +480,7 @@ bool jsarray::every(jsfunction<bool(const jsvariable &, unsigned long int)> f) c
 bool
 jsarray::every(jsfunction<bool(const jsvariable &, unsigned long, const jsarray &)> f, const jsvariable &_this) const {
     for (unsigned long i = 0; i < values.size(); ++i)
-        if (!f(values.at(i), i, _this ? (jsarray) _this : *this))
+        if (const auto &value = values.at(i); value and !f(value, i, _this ? (jsarray) _this : *this))
             return false;
     return true;
 }
@@ -513,6 +513,77 @@ jsarray jsarray::fill(const jsvariable &new_value, unsigned long int start) cons
 
 jsarray jsarray::fill(const jsvariable &new_value) const {
     return std::move(fill(new_value, 0, values.size()));
+}
+
+jsarray
+jsarray::filter(jsfunction<bool(const jsvariable &, unsigned long, const jsarray &)> f, const jsvariable &_this) const {
+    jsarray result;
+    for (unsigned long int i = 0; i < values.size(); ++i)
+        if (const auto &value = values.at(i); value and f(value, i, _this ? (jsarray) _this : *this))
+            result.push(value);
+    return std::move(result);
+}
+
+jsarray jsarray::filter(jsfunction<bool(const jsvariable &, unsigned long int)> f) const {
+    jsarray result;
+    for (unsigned long int i = 0; i < values.size(); ++i)
+        if (const auto &value = values.at(i); value and f(value, i))
+            result.push(value);
+    return std::move(result);
+}
+
+jsarray jsarray::filter(jsfunction<bool(const jsvariable &)> f) const {
+    jsarray result;
+    for (const auto &value : values)
+        if (value and f(value))
+            result.push(value);
+    return std::move(result);
+}
+
+const jsvariable &
+jsarray::find(jsfunction<bool(const jsvariable &, unsigned long, const jsarray &)> f,
+              const jsvariable &_this) const {
+    if (auto index = findIndex(std::move(f), _this); index >= 0)
+        return values.at(index);
+    else
+        return jsvariable::undefined;
+}
+
+const jsvariable &jsarray::find(jsfunction<bool(const jsvariable &, unsigned long int)> f) const {
+    if (auto index = findIndex(std::move(f)); index >= 0)
+        return values.at(index);
+    else
+        return jsvariable::undefined;
+}
+
+const jsvariable &jsarray::find(jsfunction<bool(const jsvariable &)> f) const {
+    if (auto index = findIndex(std::move(f)); index >= 0)
+        return values.at(index);
+    else
+        return jsvariable::undefined;
+}
+
+signed long int
+jsarray::findIndex(jsfunction<bool(const jsvariable &, unsigned long, const jsarray &)> f,
+                   const jsvariable &_this) const {
+    for (signed long int i = 0; i < values.size(); ++i)
+        if (const auto &value = values.at(i); value and f(value, i, _this ? (jsarray) _this : *this))
+            return i;
+    return -1;
+}
+
+signed long int jsarray::findIndex(jsfunction<bool(const jsvariable &, unsigned long int)> f) const {
+    for (signed long int i = 0; i < values.size(); ++i)
+        if (const auto &value = values.at(i); value and f(value, i))
+            return i;
+    return -1;
+}
+
+signed long int jsarray::findIndex(jsfunction<bool(const jsvariable &)> f) const {
+    for (signed long int i = 0; i < values.size(); ++i)
+        if (const auto &value = values.at(i); value and f(value))
+            return i;
+    return -1;
 }
 
 jsobject::jsobject(std::initializer_list<std::pair<const std::string, jsvariable>> _values) :

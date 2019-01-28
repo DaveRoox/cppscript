@@ -3,6 +3,10 @@
 
 using namespace std;
 
+void f(const jsvariable &_, const unsigned long i, const jsarray &arr) {
+    cout << i << " -> " << jsboolean{(jsnumber) arr[i] >= 35} << endl;
+};
+
 int main() {
 
     let u; // Creating an undefined variable
@@ -54,7 +58,7 @@ int main() {
 
     cout << ((jsarray) ao).concat(false, 1, 2.88, "ciao", 'c', jsarray{"key", "value"}) << endl;
 
-    jsarray lol = {"Banana", "Orange", "Apple", "Mango", "Cino"};
+    jsarray lol = {"Banana", "Orange", "Apple", "Mango", "Ananas"};
     cout << lol.copyWithin(2, 0, 4) << endl;
     cout << lol.entries() << endl;
 
@@ -85,6 +89,23 @@ int main() {
 
     jsarray fruits = jsarray{"Banana", "Orange", "Apple", "Mango"};
     cout << fruits.fill(true, 0, 2) << endl;
+
+    cout << ages.filter({[](const jsvariable &age) { return (jsnumber) age >= 88; }}) << endl;
+
+    cout << ages.findIndex({[](const jsvariable &age) { return (jsnumber) age >= 35; }}) << endl;
+
+    cout << ages.find({[](const jsvariable &age) { return (jsnumber) age > 99; }}) << endl;
+
+    ages.forEach<void>({f}, ages.fill(40, 0, 2));
+
+    ages.forEach(
+            jsfunction<void(const jsvariable &age, unsigned long index, const jsarray &people)>{
+                    [](const jsvariable &age, unsigned long index, const jsarray &people) -> void {
+                        cout << people[index] << " is " << age << " years old!\n";
+                    }
+            },
+            {"Marta", "Gennaro", "Pasquale", "Giovanna"}
+    );
 
     return 0;
 }

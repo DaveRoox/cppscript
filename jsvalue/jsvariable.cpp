@@ -12,7 +12,7 @@ jsvariable::jsvariable() :
         value{nullptr}, _type{constructor_t::Undefined}, constructor{_type} {}
 
 jsvariable::jsvariable(const jsvariable &other) :
-        value{other.value}, constructor{other.constructor} {}
+        value{other.value}, _type{other._type}, constructor{_type} {}
 
 jsvariable::jsvariable(jsnumber _value) :
         value{std::make_shared<jsnumber>(std::move(_value))}, _type{constructor_t::Number}, constructor{_type} {}
